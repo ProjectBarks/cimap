@@ -25,7 +25,7 @@ go get github.com/projectbarks/cimap
 
 ## Usage & Documentation
 
-Function documentation can be found at [GoDocs](https://pkg.go.dev/github.com/projectbarks/). Here's a basic example of how to use the `CaseInsensitiveMap`:
+Function documentation can be found at [GoDocs](https://pkg.go.dev/github.com/projectbarks/cimap). Here's a basic example of how to use the `CaseInsensitiveMap`:
 
 ```go
 package main
