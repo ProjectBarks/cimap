@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/projectbarks/cimap)](https://goreportcard.com/report/github.com/projectbarks/cimap)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md)
 
-`CaseInsensitiveMap` `(cimap)` is a a high performance map for case-insensitive keys.
+`CaseInsensitiveMap` `(cimap)` is a high performance map for case-insensitive keys.
 
 ## Features
 
