@@ -9,26 +9,46 @@ import (
 	"github.com/projectbarks/cimap"
 )
 
-// randomString generates a random lowercase string of length n.
-func randomString(n int) string {
-	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const (
+	_UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	_LOWERCASE = "abcdefghijklmnopqrstuvwxyz"
+	_UNICODE   = "¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"
+)
+
+type keyGroup struct {
+	name string
+	base string
+	keys []string
+}
+
+func randomString(n int, base string) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	b := make([]byte, n)
 	for i := range b {
-		b[i] = letters[r.Intn(len(letters))]
+		b[i] = base[r.Intn(len(base))]
 	}
 	return string(b)
 }
 
-func generateRandomKeys(num, min, max int) []string {
+func generateKeyGroups(num, min, max int) []keyGroup {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	out := make([]string, num)
 
-	for i := 0; i < num; i++ {
-		out[i] = randomString(r.Intn(max-min)+min) + strconv.Itoa(i)
+	result := []keyGroup{
+		{name: "Upper", base: _UPPERCASE},
+		{name: "Lower", base: _LOWERCASE},
+		{name: "Unicode", base: _UNICODE},
 	}
-	return out
+
+	for i, group := range result {
+		for range num {
+			key := randomString(r.Intn(max-min)+min, group.base) + strconv.Itoa(i)
+			group.keys = append(group.keys, key)
+		}
+		result[i] = group
+	}
+
+	return result
 }
 
 // ---------------------------------------------------------------------
@@ -37,59 +57,66 @@ func generateRandomKeys(num, min, max int) []string {
 
 func BenchmarkAdd(b *testing.B) {
 	b.StopTimer()
-	keys := generateRandomKeys(b.N*2, 5, 20)
+	groups := generateKeyGroups(b.N*2, 5, 50)
 
-	b.Run("Base", func(b *testing.B) {
-		m := &InsenstiveStubMap[string]{keys: make(map[string]string, b.N)}
+	for _, group := range groups {
+		b.Run(group.name, func(b *testing.B) {
+			b.Run("Base", func(b *testing.B) {
+				m := &InsenstiveStubMap[string]{keys: make(map[string]string, b.N)}
 
-		b.ReportAllocs()
-		b.StartTimer()
-		defer b.StopTimer()
+				b.ReportAllocs()
+				b.StartTimer()
+				defer b.StopTimer()
 
-		for i := 0; i < b.N; i++ {
-			m.Add(keys[i%len(keys)], "some-value")
-		}
-	})
+				for i := 0; i < b.N; i++ {
+					m.Add(group.keys[i%len(group.keys)], "some-value")
+				}
+			})
 
-	b.Run("CIMap", func(b *testing.B) {
-		cm := cimap.New[string]()
-		b.ReportAllocs()
-		b.StartTimer()
-		defer b.StopTimer()
+			b.Run("CIMap", func(b *testing.B) {
+				cm := cimap.New[string]()
+				b.ReportAllocs()
+				b.StartTimer()
+				defer b.StopTimer()
 
-		for i := 0; i < b.N; i++ {
-			cm.Add(keys[i%len(keys)], "some-value")
-		}
-	})
+				for i := 0; i < b.N; i++ {
+					cm.Add(group.keys[i%len(group.keys)], "some-value")
+				}
+			})
+		})
+	}
 }
 
 func BenchmarkGet(b *testing.B) {
 	const numKeys = 100000
-	keys := generateRandomKeys(numKeys, 5, 20)
+	groups := generateKeyGroups(numKeys, 5, 50)
 
-	// Pre-fill both maps with all keys
-	mBase := &InsenstiveStubMap[string]{keys: make(map[string]string, numKeys)}
-	cm := cimap.New[string](numKeys)
-	for _, k := range keys {
-		mBase.Add(k, "some-value")
-		cm.Add(k, "some-value")
+	for _, group := range groups {
+		b.Run(group.name, func(b *testing.B) {
+			mBase := &InsenstiveStubMap[string]{keys: make(map[string]string, numKeys)}
+			cm := cimap.New[string](numKeys)
+			for _, k := range group.keys {
+				mBase.Add(k, "some-value")
+				cm.Add(k, "some-value")
+			}
+
+			b.ResetTimer()
+
+			b.Run("Base", func(b *testing.B) {
+				b.ReportAllocs()
+				for i := 0; i < b.N; i++ {
+					_, _ = mBase.Get(group.keys[i%numKeys])
+				}
+			})
+
+			b.Run("CIMap", func(b *testing.B) {
+				b.ReportAllocs()
+				for i := 0; i < b.N; i++ {
+					_, _ = cm.Get(group.keys[i%numKeys])
+				}
+			})
+		})
 	}
-
-	b.ResetTimer()
-
-	b.Run("Base", func(b *testing.B) {
-		b.ReportAllocs()
-		for i := 0; i < b.N; i++ {
-			_, _ = mBase.Get(keys[i%numKeys])
-		}
-	})
-
-	b.Run("CIMap", func(b *testing.B) {
-		b.ReportAllocs()
-		for i := 0; i < b.N; i++ {
-			_, _ = cm.Get(keys[i%numKeys])
-		}
-	})
 }
 
 // ---------------------------------------------------------------------
@@ -98,33 +125,38 @@ func BenchmarkGet(b *testing.B) {
 
 func BenchmarkDelete(b *testing.B) {
 	const numKeys = 100000
-	keys := generateRandomKeys(numKeys, 5, 10)
+	groups := generateKeyGroups(numKeys, 5, 50)
 
-	b.Run("Base", func(b *testing.B) {
-		m := &InsenstiveStubMap[string]{keys: make(map[string]string, numKeys)}
-		for _, k := range keys {
-			m.Add(k, "some-value")
-		}
+	for _, group := range groups {
 
-		b.StartTimer()
-		b.ReportAllocs()
-		defer b.StopTimer()
-		for i := 0; i < b.N; i++ {
-			m.Delete(keys[i%numKeys])
-		}
-	})
+		b.Run(group.name, func(b *testing.B) {
+			b.Run("Base", func(b *testing.B) {
+				m := &InsenstiveStubMap[string]{keys: make(map[string]string, numKeys)}
+				for _, k := range group.keys {
+					m.Add(k, "some-value")
+				}
 
-	b.Run("CIMap", func(b *testing.B) {
-		cm := cimap.New[string](numKeys)
-		for _, k := range keys {
-			cm.Add(k, "some-value")
-		}
+				b.StartTimer()
+				b.ReportAllocs()
+				defer b.StopTimer()
+				for i := 0; i < b.N; i++ {
+					m.Delete(group.keys[i%numKeys])
+				}
+			})
 
-		b.StartTimer()
-		b.ReportAllocs()
-		defer b.StopTimer()
-		for i := 0; i < b.N; i++ {
-			cm.Delete(keys[i%numKeys])
-		}
-	})
+			b.Run("CIMap", func(b *testing.B) {
+				cm := cimap.New[string](numKeys)
+				for _, k := range group.keys {
+					cm.Add(k, "some-value")
+				}
+
+				b.StartTimer()
+				b.ReportAllocs()
+				defer b.StopTimer()
+				for i := 0; i < b.N; i++ {
+					cm.Delete(group.keys[i%numKeys])
+				}
+			})
+		})
+	}
 }
