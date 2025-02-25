@@ -70,7 +70,7 @@ func main() {
 
 > :warning: **Note**: Code performs best when there are lots of string allocations due to `strings.ToLower` /
 >			`strings.ToUpper`. This would occur the strings in the map either contain 
->			unicode or uppercase characters. If you can gaurantee the inputs provided 
+>			unicode or mismatching case characters. If you can gaurantee the inputs provided 
 >			will only be one casing use a native map instead.
 
 ```bash
