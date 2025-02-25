@@ -69,8 +69,6 @@ func main() {
 -   **No additional allocations**: `CIMap` uses **0 B/op** and **0 allocs/op** for Add, Get, and Delete.
 -   **Inline case handling**: By converting characters to lowercase inline without extra string allocations, `CIMap` avoids overhead from creating new strings.
 
-Below is an example of benchmark data comparing a **base** case-insensitive map approach (`Base`) vs. `CaseInsensitiveMap` (`CIMap`). The results show substantial performance gains, particularly in reduced time per operation (ns/op), **no allocations** (`B/op` and `allocs/op`), and overall higher efficiency for Add, Get, and Delete operations.
-
 ```lang=bash
           │    sec/op     │   sec/op     vs base                │
 Add/16       45.04n ±  9%   20.85n ± 4%  -53.69% (p=0.000 n=10)
