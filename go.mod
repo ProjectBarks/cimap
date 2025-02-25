@@ -1,4 +1,4 @@
-module cimap
+module github.com/projectbarks/cimap
 
 go 1.18
 
