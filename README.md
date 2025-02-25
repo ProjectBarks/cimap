@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/projectbarks/cimap)](https://goreportcard.com/report/github.com/projectbarks/cimap)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md)
 
-`CaseInsensitiveMap` `(cimap)` is a Go package that provides a high performance map-like data structure with case-insensitive keys. 
+`CaseInsensitiveMap` `(cimap)` is a Go package that provides a high performance map-like data structure with case-insensitive keys.
 
 ## Features
 
@@ -65,8 +65,8 @@ func main() {
 
 ## Performance
 
--   **Time per operation**: Over 50% speed improvement compared to native case insensitive map.
--   **No additional allocations**: `CIMap` uses **0 B/op** and **0 allocs/op** for Add, Get, Delete, and more. By converting characters to lowercase inline without extra string allocations, `CIMap` avoids overhead from creating new strings.
+- **Time per operation**: Over 50% speed improvement compared to native case insensitive map.
+- **No additional allocations**: `CIMap` uses **0 B/op** and **0 allocs/op** for Add, Get, Delete, and more. By converting characters to lowercase inline without extra string allocations, `CIMap` avoids overhead from creating new strings.
 
 ```lang=bash
           │    sec/op     │   sec/op     vs base                │
@@ -98,9 +98,10 @@ geomean                 ²               ?                       ² ³
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue.
 
-### Development 
+### Development
 
 Comparing the benchmark performance stats:
+
 ```lang=bash
 go install golang.org/x/perf/cmd/benchstat@latest
 go test -benchmem -run=^$ -bench '^(Benchmark)' cimap -count=10 > bench-all.txt
