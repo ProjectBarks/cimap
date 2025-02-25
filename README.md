@@ -69,15 +69,14 @@ func main() {
 Below is an example of benchmark data comparing a **base** case-insensitive map approach (`Base`) vs. `CaseInsensitiveMap` (`CIMap`). The results show substantial performance gains, particularly in reduced time per operation (ns/op), **no allocations** (`B/op` and `allocs/op`), and overall higher efficiency for Add, Get, and Delete operations.
 
 ```lang=bash
-          │ bench-old.txt │            bench-new.txt            │
           │    sec/op     │   sec/op     vs base                │
 Add/16       45.04n ±  9%   20.85n ± 4%  -53.69% (p=0.000 n=10)
 Get/16      131.35n ±  6%   59.49n ± 9%  -54.71% (p=0.000 n=10)
 Delete/16    66.89n ± 10%   22.39n ± 6%  -66.53% (p=0.000 n=10)
 geomean      73.41n         30.28n       -58.75%
 ```
+
 ```lang=bash
-          │ bench-old.txt │             bench-new.txt              │
           │     B/op      │   B/op     vs base                     │
 Add/16        95.50 ± 39%   0.00 ± 0%  -100.00% (p=0.000 n=10)
 Get/16        20.00 ±  0%   0.00 ± 0%  -100.00% (p=0.000 n=10)
@@ -85,9 +84,9 @@ Delete/16     16.00 ±  0%   0.00 ± 0%  -100.00% (p=0.000 n=10)
 geomean       31.26                    ?                       ¹ ²
 ¹ summaries must be >0 to compute geomean
 ² ratios must be >0 to compute geomean
-
 ```
-          │ bench-old.txt │              bench-new.txt              │
+
+```lang=bash
           │   allocs/op   │ allocs/op   vs base                     │
 Add/16       1.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=10)
 Get/16       0.000 ± 0%     0.000 ± 0%         ~ (p=1.000 n=10) ¹
