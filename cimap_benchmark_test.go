@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"cimap"
+	"github.com/projectbarks/cimap"
 )
 
 // randomString generates a random lowercase string of length n.

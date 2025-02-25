@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"cimap"
+	"github.com/projectbarks/cimap"
 
 	"github.com/stretchr/testify/assert"
 )
