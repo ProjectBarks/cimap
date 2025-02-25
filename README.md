@@ -68,7 +68,7 @@ func main() {
 - **Time per operation**: Over 50% speed improvement compared to native case insensitive map.
 - **No additional allocations**: `CIMap` uses **0 B/op** and **0 allocs/op** for Add, Get, Delete, and more. By converting characters to lowercase inline without extra string allocations, `CIMap` avoids overhead from creating new strings.
 
-> :warning: This code performs best when there is lots of string allocations due to `strings.ToLower` 
+> :warning: This code performs best when there are lots of string allocations due to `strings.ToLower` 
 >			for strings either containing unicode or uppercase characters. If you can gaurantee
 >           the inputs provided will only be one casing use a native map instead.
 
