@@ -120,12 +120,15 @@ Contributions are welcome! Please feel free to submit a pull request or open an 
 
 ### Development
 
-Comparing the benchmark performance stats:
+Comparing the benchmark performance stats.
 
-Setup 
+#### Setup 
+
 ```bash
 go install golang.org/x/perf/cmd/benchstat@latest
 ```
+
+#### Running benchmarks
 
 ```bash
 go test -benchmem -run=^$ -bench '^(Benchmark)' github.com/projectbarks/cimap -count=10 > benchmark/bench-all.txt
