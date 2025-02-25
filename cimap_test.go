@@ -172,7 +172,7 @@ func TestGetAndDel(t *testing.T) {
 			assert.Equal(t, tt.getAndDel.val, val, "Value mismatch after GetAndDel")
 
 			// verify that the key is truly deleted if it existed
-			val, ok = m.Get(tt.finalCheck.key)
+			_, ok = m.Get(tt.finalCheck.key)
 			assert.Equal(t, tt.finalCheck.expected, ok, "Expected existence mismatch after final check")
 		})
 	}

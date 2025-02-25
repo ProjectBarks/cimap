@@ -1,8 +1,11 @@
 # CaseInsensitiveMap
 
-## Overview
+[![Go Reference](https://pkg.go.dev/badge/github.com/projectbarks/cimap.svg)](https://pkg.go.dev/github.com/projectbarks/cimap)
+[![Main Actions Status](https://github.com/projectbarks/cimap/workflows/Go/badge.svg)](https://github.com/projectbarks/cimap/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/projectbarks/cimap)](https://goreportcard.com/report/github.com/projectbarks/cimap)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md)
 
-`CaseInsensitiveMap` `(cimap)` is a Go package that provides a map-like data structure with case-insensitive keys. It is designed to handle string keys in a way that ignores case differences, making it useful for scenarios where key case sensitivity is not desired.
+`CaseInsensitiveMap` `(cimap)` is a Go package that provides a high performance map-like data structure with case-insensitive keys. 
 
 ## Features
 
@@ -14,7 +17,7 @@
 
 ## Installation
 
-To install the package, use the following command:
+You need Golang [1.23.x](https://go.dev/dl/) or above
 
 ```bash
 go get github.com/projectbarks/cimap
