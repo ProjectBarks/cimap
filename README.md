@@ -66,8 +66,7 @@ func main() {
 ## Performance
 
 -   **Time per operation**: Over 50% speed improvement compared to native case insensitive map.
--   **No additional allocations**: `CIMap` uses **0 B/op** and **0 allocs/op** for Add, Get, and Delete.
--   **Inline case handling**: By converting characters to lowercase inline without extra string allocations, `CIMap` avoids overhead from creating new strings.
+-   **No additional allocations**: `CIMap` uses **0 B/op** and **0 allocs/op** for Add, Get, Delete, and more. By converting characters to lowercase inline without extra string allocations, `CIMap` avoids overhead from creating new strings.
 
 ```lang=bash
           │    sec/op     │   sec/op     vs base                │
