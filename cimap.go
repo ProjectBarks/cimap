@@ -301,8 +301,8 @@ func (c *CaseInsensitiveMap[T]) MarshalJSON() ([]byte, error) {
 ////////////////////////////////////////////////////////////
 
 // hashString computes the FNV-1a hash for s.
-// It manually converts uppercase ASCII letters to lowercase
-// on a per-byte basis, avoiding any allocation.
+// It manually converts to lowercase
+// avoiding any allocation.
 func defaultHashString(key string) hash64 {
 	h := offset64
 	for _, r := range key {
