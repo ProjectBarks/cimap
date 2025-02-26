@@ -35,8 +35,8 @@ func generateKeyGroups(num, min, max int) []keyGroup {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	result := []keyGroup{
-		{name: "Upper", base: _UPPERCASE},
-		{name: "Lower", base: _LOWERCASE},
+		{name: "ASCII Mismatch", base: _UPPERCASE},
+		{name: "ASCII Match", base: _LOWERCASE},
 		{name: "Unicode", base: _UNICODE},
 	}
 

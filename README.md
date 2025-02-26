@@ -68,50 +68,49 @@ func main() {
 - **Time per operation**: Over 50% speed improvement compared to native case insensitive map.
 - **No additional allocations**: `CIMap` uses **0 B/op** and **0 allocs/op** for Add, Get, Delete, and more. By converting characters to lowercase inline without extra string allocations, `CIMap` avoids overhead from creating new strings.
 
-> :warning: **Note**: Code performs best when there are lots of string allocations due to `strings.ToLower` /
->			`strings.ToUpper`. This would occur the strings in the map either contain 
->			unicode or mismatching case characters. If you can gaurantee the inputs provided 
->			will only be one casing use a native map instead.
+> :warning: **Note**: Code performs best when there are string allocations due to
+>			`strings.ToLower` / `strings.ToUpper`. This would occur if the strings in the 
+> 			map either contain Unicode or mismatching case-characters. If you can gaurantee 
+> 			the inputs provided will only be one character case consider not using
+> 			case insensitivity at all. 
 
 ```bash
-          │    sec/op     │   sec/op     vs base                │
-                  │         sec/op          │    sec/op     vs base                 │
-Add/Upper/16                   137.3n ±  2%   129.5n ± 11%         ~ (p=0.105 n=10)
-Add/Lower/16                   22.68n ±  4%   49.48n ± 16%  +118.21% (p=0.000 n=10)
-Add/Unicode/16                 363.4n ±  4%   331.9n ±  7%    -8.69% (p=0.000 n=10)
-Get/Upper/16                  118.30n ±  7%   93.06n ±  7%   -21.34% (p=0.000 n=10)
-Get/Lower/16                   50.27n ± 10%   96.12n ± 12%   +91.22% (p=0.000 n=10)
-Get/Unicode/16                 578.0n ±  6%   618.3n ±  5%         ~ (p=0.052 n=10)
-Delete/Upper/16                79.37n ±  8%   48.65n ± 10%   -38.71% (p=0.000 n=10)
-Delete/Lower/16                30.38n ±  5%   49.97n ± 11%   +64.51% (p=0.000 n=10)
-Delete/Unicode/16              547.1n ±  4%   468.0n ±  5%   -14.46% (p=0.000 n=10)
-geomean                        119.9n         133.4n         +11.23%
+                         │         sec/op          │    sec/op     vs base                │
+Add/ASCII_Mismatch/16                  70.66n ± 3%    54.02n ± 2%  -23.55% (p=0.000 n=25)
+Add/ASCII_Match/16                     19.35n ± 3%    35.19n ± 6%  +81.86% (p=0.000 n=25)
+Add/Unicode/16                         148.8n ± 5%    127.2n ± 3%  -14.52% (p=0.000 n=25)
+Get/ASCII_Mismatch/16                  115.0n ± 5%    101.2n ± 6%  -12.00% (p=0.000 n=25)
+Get/ASCII_Match/16                     53.59n ± 3%   104.00n ± 4%  +94.07% (p=0.000 n=25)
+Get/Unicode/16                         578.0n ± 3%    652.9n ± 7%  +12.96% (p=0.000 n=25)
+Delete/ASCII_Mismatch/16               80.17n ± 4%    50.76n ± 4%  -36.68% (p=0.000 n=25)
+Delete/ASCII_Match/16                  30.87n ± 3%    50.80n ± 4%  +64.56% (p=0.000 n=25)
+Delete/Unicode/16                      551.9n ± 3%    475.2n ± 3%  -13.90% (p=0.001 n=25)
 ```
 
 ```bash
-          │     B/op      │   B/op     vs base                     │
-Add/Upper/16                  122.0 ±  5%       0.0 ±  0%  -100.00% (p=0.000 n=10)
-Add/Lower/16                  46.50 ±  5%      0.00 ±  0%  -100.00% (p=0.000 n=10)
-Add/Unicode/16                142.5 ± 28%       0.0 ±  0%  -100.00% (p=0.000 n=10)
-Get/Upper/16                  33.00 ±  0%      0.00 ±  0%  -100.00% (p=0.000 n=10)
-Get/Lower/16                  0.000 ±  0%     0.000 ±  0%         ~ (p=1.000 n=10) ¹
-Get/Unicode/16                112.0 ±  0%       0.0 ±  0%  -100.00% (p=0.000 n=10)
-Delete/Upper/16               33.00 ±  0%      0.00 ±  0%  -100.00% (p=0.000 n=10)
-Delete/Lower/16               0.000 ±  0%     0.000 ±  0%         ~ (p=1.000 n=10) ¹
-Delete/Unicode/16           119.000 ±  1%     3.000 ± 33%   -97.48% (p=0.000 n=10)
+                         │          B/op           │    B/op      vs base                     │
+Add/ASCII_Mismatch/16                 92.00 ± 1%      0.00 ±  0%  -100.00% (p=0.000 n=25)
+Add/ASCII_Match/16                    80.00 ± 3%      0.00 ±  0%  -100.00% (p=0.000 n=25)
+Add/Unicode/16                        117.0 ± 3%       0.0 ±  0%  -100.00% (p=0.000 n=25)
+Get/ASCII_Mismatch/16                 33.00 ± 0%      0.00 ±  0%  -100.00% (p=0.000 n=25)
+Get/ASCII_Match/16                    0.000 ± 0%     0.000 ±  0%         ~ (p=1.000 n=25) ¹
+Get/Unicode/16                        112.0 ± 0%       0.0 ±  0%  -100.00% (p=0.000 n=25)
+Delete/ASCII_Mismatch/16              33.00 ± 0%      0.00 ±  0%  -100.00% (p=0.000 n=25)
+Delete/ASCII_Match/16                 0.000 ± 0%     0.000 ±  0%         ~ (p=1.000 n=25) ¹
+Delete/Unicode/16                   120.000 ± 1%     3.000 ± 33%   -97.50% (p=0.000 n=25)
 ```
 
 ```bash
-                  │        allocs/op        │ allocs/op   vs base                     │
-Add/Upper/16                   1.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=10)
-Add/Lower/16                   0.000 ± 0%     0.000 ± 0%         ~ (p=1.000 n=10) ¹
-Add/Unicode/16                 2.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=10)
-Get/Upper/16                   1.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=10)
-Get/Lower/16                   0.000 ± 0%     0.000 ± 0%         ~ (p=1.000 n=10) ¹
-Get/Unicode/16                 1.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=10)
-Delete/Upper/16                1.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=10)
-Delete/Lower/16                0.000 ± 0%     0.000 ± 0%         ~ (p=1.000 n=10) ¹
-Delete/Unicode/16              2.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=10)
+                         │        allocs/op        │ allocs/op   vs base                     │
+Add/ASCII_Mismatch/16                 1.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=25)
+Add/ASCII_Match/16                    0.000 ± 0%     0.000 ± 0%         ~ (p=1.000 n=25) ¹
+Add/Unicode/16                        1.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=25)
+Get/ASCII_Mismatch/16                 1.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=25)
+Get/ASCII_Match/16                    0.000 ± 0%     0.000 ± 0%         ~ (p=1.000 n=25) ¹
+Get/Unicode/16                        1.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=25)
+Delete/ASCII_Mismatch/16              1.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=25)
+Delete/ASCII_Match/16                 0.000 ± 0%     0.000 ± 0%         ~ (p=1.000 n=25) ¹
+Delete/Unicode/16                     2.000 ± 0%     0.000 ± 0%  -100.00% (p=0.000 n=25)
 ```
 
 ## Contributing
